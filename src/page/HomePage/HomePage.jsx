@@ -2,11 +2,7 @@ import React from "react";
 import Treemap from "./Treemap";
 
 const HomePage = () => {
-  return (
-    <div>
-      <Treemap />
-    </div>
-  );
+  return <Treemap />;
 };
 
 export default HomePage;
