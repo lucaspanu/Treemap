@@ -1,0 +1,68 @@
+{
+  "name": "vehicles",
+  "children": [
+    {
+      "name": "Cars",
+      "children": [
+        {
+          "name": "BMW",
+          "sold": 2000
+        },
+        {
+          "name": "Toyota",
+          "sold": 1000
+        },
+        {
+          "name": "Hyundai",
+          "sold": 500
+        },
+        {
+          "name": "Fiat",
+          "sold": 500
+        }
+      ]
+    },
+    {
+      "name": "Bikes",
+      "children": [
+        {
+          "name": "Yamaha",
+          "sold": 3000
+        },
+        {
+          "name": "BMW",
+          "sold": 1000
+        },
+        {
+          "name": "Hyundai",
+          "sold": 800
+        },
+        {
+          "name": "Fiat",
+          "sold": 2000
+        }
+      ]
+    },
+    {
+      "name": "Plane",
+      "children": [
+        {
+          "name": "737",
+          "sold": 3000
+        },
+        {
+          "name": "BMW",
+          "sold": 1000
+        },
+        {
+          "name": "Hyundai",
+          "sold": 800
+        },
+        {
+          "name": "Fiat",
+          "sold": 500
+        }
+      ]
+    }
+  ]
+}
