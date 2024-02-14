@@ -90,7 +90,7 @@ const Treemap = () => {
       .text((d) => d.data.name + " - " + d.value);
 
     d3.selectAll("rect").on("click", function (d) {
-      window.open("http://localhost:5173/hiMarc", "_blank");
+      window.open("/hiMarc", "_blank", "noreferrer");
     });
   }, []);
 
@@ -112,9 +112,7 @@ const Treemap = () => {
           padding: "5px",
           textAlign: "center",
         }}
-      >
-        Hola
-      </div>
+      />
       <svg
         ref={ref}
         viewBox={`0 0 ${width} ${height}`}
