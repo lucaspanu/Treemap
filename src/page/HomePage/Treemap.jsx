@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
 import data from "./data.json";
+import routes from "../../Router/routes";
 
 const height = 800;
 const width = 500;
@@ -90,7 +91,7 @@ const Treemap = () => {
       .text((d) => d.data.name + " - " + d.value);
 
     d3.selectAll("rect").on("click", function (d) {
-      window.open("/hiMarc", "_blank", "noreferrer");
+      window.open("/#hiMarc", "_blank", "noreferrer");
     });
   }, []);
 

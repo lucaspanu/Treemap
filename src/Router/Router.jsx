@@ -1,13 +1,13 @@
 import React from "react";
 import routes from "./routes";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 
 import HomePage from "../page/HomePage/HomePage";
 import ErrorPage from "../page/ErrorPage/ErrorPage";
 import HiMarc from "../page/HomePage/HiMarc";
 
 const Router = () => {
-  const router = createBrowserRouter([
+  const router = createHashRouter([
     {
       path: routes.root,
       element: <HomePage />,
@@ -16,6 +16,7 @@ const Router = () => {
     {
       path: routes.hiMarc,
       element: <HiMarc />,
+      errorElement: <ErrorPage />,
     },
   ]);
 
