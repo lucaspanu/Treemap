@@ -1,10 +1,9 @@
 import React from "react";
 
 const ErrorPage = () => {
-  console.log("Error Page");
   return (
     <div>
-      <h1>Hi Marc</h1>
+      <h1>Error Page</h1>
     </div>
   );
 };

@@ -1,0 +1,72 @@
+.tooltip {
+  position: absolute;
+  display: none;
+  min-width: 300px;
+  background: #fff;
+  border: 4px solid #25262b;
+  font-size: 14px;
+}
+
+.tooltipTitle {
+  color: #25262b;
+  font-size: 13.5px;
+  line-height: 30px;
+  margin: 0px;
+  padding: 0 10px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-color: inherit;
+  text-indent: 0;
+}
+
+/* --- ROW --- */
+.table > tbody > tr {
+  height: 30px;
+  color: rgb(20 22 29);
+}
+
+.table > tbody > tr:not(:last-child) {
+  border-bottom: 2px solid #e3e4e9;
+}
+
+.table > tbody > tr > td {
+  font-weight: bold;
+}
+
+.ticker {
+  padding-left: 10px;
+}
+.price {
+  padding-left: 4px;
+  padding-right: 4px;
+  text-align: right;
+}
+.change {
+  padding-right: 10px !important;
+  text-align: right;
+}
+
+.hovered {
+  border-bottom: none !important;
+  color: #fff !important;
+  font-size: 21px !important;
+  height: 21px !important;
+}
+.hovered > td {
+  padding: 8px 0 0 10px;
+}
+.description {
+  font-size: 12px;
+  line-height: 12px;
+  padding: 6px 10px 10px 10px !important;
+}
+
+/* --- MUI --- */
+.MuiLineElement-root {
+  stroke-width: 0.75px !important;
+}
