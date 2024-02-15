@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import TreemapTooltip from "./TreemapTooltip/TreemapTooltip";
 import "./Treemap.css";
-import { getChangeColor } from "../../utils/fx";
+import { getChangeColor, getChangeFormat } from "../../utils/fx";
 
 const height = 500;
 const width = 500;
@@ -83,6 +83,49 @@ const Treemap = ({ data }) => {
 
         return textWidth <= cellWidth && textHeight <= cellHeight
           ? d.data.ticker
+          : "";
+      })
+      .on("mousemove", function (e, d) {
+        handleTooltip(e, d, tool);
+      })
+      .on("mouseout", function () {
+        tool.style("display", "none");
+      });
+
+    // and to add the text labels
+    svg
+      .selectAll("vals")
+      .data(childArray)
+      .enter()
+      .append("text")
+      .attr("x", (d) => d.x0 + (d.x1 - d.x0) / 2 - 20)
+      .attr("y", (d) => d.y0 + (d.y1 - d.y0) / 2 + 24)
+      .attr("id", "treemapSubTitle")
+      .text(function (d) {
+        var cellWidth = d.x1 - d.x0;
+        var cellHeight = d.y1 - d.y0;
+
+        var tempText = svg
+          .append("text")
+          .attr("opacity", 0)
+          .attr("id", "treemapTitle")
+          .text(d.data.ticker);
+        var textWidth = tempText.node().getBBox().width;
+        var textHeight = tempText.node().getBBox().height;
+
+        var subText = svg
+          .append("text")
+          .attr("opacity", 0)
+          .attr("id", "treemapSubTitle")
+          .text(d.data.change);
+        var subTextWidth = subText.node().getBBox().width;
+        var subTextHeight = subText.node().getBBox().height;
+        subText.remove();
+
+        return textWidth <= cellWidth &&
+          subTextWidth <= cellWidth &&
+          textHeight + subTextHeight <= cellHeight
+          ? getChangeFormat(d.data.change)
           : "";
       })
       .on("mousemove", function (e, d) {
