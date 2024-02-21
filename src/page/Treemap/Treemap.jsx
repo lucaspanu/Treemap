@@ -13,8 +13,8 @@ const width = 1400;
 
 const Treemap = ({ data }) => {
   const ref = useRef();
-  const tooltipRef = useRef();
 
+  const tooltipRef = useRef();
   const [tooltipData, setTooltipData] = useState();
   const handleTooltip = (e, d, tool) => {
     tool.style("left", e.pageX + 30 + "px");
@@ -48,8 +48,6 @@ const Treemap = ({ data }) => {
       .paddingTop(16)
       .paddingInner(1)
       .round(true)(hierarchy);
-
-    var tool = d3.select(tooltipRef.current);
 
     let titleArray = root.descendants().filter((d) => d.depth == 1);
     let subTitleArray = root.descendants().filter((d) => d.depth == 2);
@@ -106,27 +104,6 @@ const Treemap = ({ data }) => {
         return cellWidth > 20 && cellHeight > 16 ? "inherit" : "none";
       });
 
-    // svg
-    //   .selectAll(".cell-sub-title-hover")
-    //   .data(subTitleArray)
-    //   .enter()
-    //   .append("rect")
-    //   .attr("x", (d) => d.x0)
-    //   .attr("y", (d) => {
-    //     var cellWidth = d.x1 - d.x0;
-    //     var cellHeight = d.y1 - d.y0;
-    //     return cellWidth > 20 && cellHeight > 16 ? d.y0 - 1 : d.y0 + 13;
-    //   })
-    //   .attr("width", (d) => d.x1 - d.x0)
-    //   .attr("height", (d) => {
-    //     var cellWidth = d.x1 - d.x0;
-    //     var cellHeight = d.y1 - d.y0;
-    //     return cellWidth > 20 && cellHeight > 16 ? cellHeight : cellHeight - 13;
-    //   })
-    //   .attr("rx", "4px")
-    //   .style("fill", "rgb(255,214,20)")
-    //   .attr("class", "sub-title-hover");
-
     svg
       .selectAll(".sub-title")
       .data(subTitleArray)
@@ -172,15 +149,6 @@ const Treemap = ({ data }) => {
         const { revenuePM, moM } = d.data;
         const changePercentage = getChangePercentage(revenuePM, moM);
         return getChangeColor(changePercentage);
-      })
-      .on("click", function (e, d) {
-        handleTooltip(e, d, tool);
-      })
-      .on("mousemove", function (e, d) {
-        handleTooltip(e, d, tool);
-      })
-      .on("mouseout", function () {
-        tool.style("display", "none");
       });
 
     svg
@@ -207,15 +175,6 @@ const Treemap = ({ data }) => {
         return textWidth <= cellWidth && textHeight <= cellHeight
           ? d.data.collection
           : "";
-      })
-      .on("click", function (e, d) {
-        handleTooltip(e, d, tool);
-      })
-      .on("mousemove", function (e, d) {
-        handleTooltip(e, d, tool);
-      })
-      .on("mouseout", function () {
-        tool.style("display", "none");
       });
 
     // and to add the text labels
@@ -260,7 +219,42 @@ const Treemap = ({ data }) => {
           textHeight + subTextHeight <= cellHeight - 20 // -> Padding
           ? text
           : "";
-      })
+      });
+  }, [data]);
+
+  // TOOLTIP
+  useLayoutEffect(() => {
+    let svg = d3
+      .select(ref.current)
+      .attr("width", width)
+      .attr("height", height);
+
+    let hierarchy = d3
+      .hierarchy(data)
+      .sum((d) => d.revenueLM)
+      .sort((a, b) => b.value - a.value);
+
+    let root = d3
+      .treemap()
+      .size([width, height])
+      .paddingOuter(3)
+      .paddingTop(16)
+      .paddingInner(1)
+      .round(true)(hierarchy);
+
+    var tool = d3.select(tooltipRef.current);
+    let collectionArray = root.descendants().filter((d) => d.depth == 3);
+
+    svg
+      .selectAll(".cells-tooltip")
+      .data(collectionArray)
+      .enter()
+      .append("rect")
+      .attr("x", (d) => d.x0)
+      .attr("y", (d) => d.y0)
+      .attr("width", (d) => d.x1 - d.x0)
+      .attr("height", (d) => d.y1 - d.y0)
+      .style("opacity", 0)
       .on("click", function (e, d) {
         handleTooltip(e, d, tool);
       })
@@ -270,7 +264,7 @@ const Treemap = ({ data }) => {
       .on("mouseout", function () {
         tool.style("display", "none");
       });
-  }, [tooltipData, data]);
+  }, [tooltipData]);
 
   return (
     <>
@@ -282,8 +276,6 @@ const Treemap = ({ data }) => {
           backgroundColor: "rgb(38,41,49)",
         }}
       >
-        {/* TODO delete sectorTitle */}
-        <div className="sectorTitle">{data.name}</div>
         <svg
           ref={ref}
           viewBox={`0 0 ${width} ${height}`}

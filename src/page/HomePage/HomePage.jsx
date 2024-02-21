@@ -41,8 +41,10 @@ const getParsedData = () =>
 const getParentSection = (itemType) =>
   sectionData.find((x) => x.itemType === itemType).parentItemType || "Other";
 
-// 3 - Performance & tooltip
-// Filtros
+// 1. Performance & tooltip
+//      Renders
+//      Tooltip --> 1. mui , 2.Make it work in another layer
+// 2. Filtros (style and work)
 
 // - Improvements -
 // Teemap Title size
