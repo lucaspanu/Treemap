@@ -1,0 +1,90 @@
+[
+  {
+    "itemType": "Cribs",
+    "parentItemType": "Crib"
+  },
+  {
+    "itemType": "Glider",
+    "parentItemType": "Seating"
+  },
+  {
+    "itemType": "Mini Cribs",
+    "parentItemType": "Crib"
+  },
+  {
+    "itemType": "KD Dresser",
+    "parentItemType": "Dresser"
+  },
+  {
+    "itemType": "Bedding",
+    "parentItemType": "Bedding"
+  },
+  {
+    "itemType": "Mattresses - Overseas",
+    "parentItemType": "Mattress"
+  },
+  {
+    "itemType": "Assembled Dresser",
+    "parentItemType": "Dresser"
+  },
+  {
+    "itemType": "Pads",
+    "parentItemType": "Bedding"
+  },
+  {
+    "itemType": "Mattresses - Domestic",
+    "parentItemType": "Mattress"
+  },
+  {
+    "itemType": "Conversion Kits",
+    "parentItemType": "Conversion Kits"
+  },
+  {
+    "itemType": "Changing Trays",
+    "parentItemType": "Other"
+  },
+  {
+    "itemType": "Crib Changer Combo",
+    "parentItemType": "Crib"
+  },
+  {
+    "itemType": "Ottoman",
+    "parentItemType": "Seating"
+  },
+  {
+    "itemType": "Hutches/Bookcase/Storage Units",
+    "parentItemType": "Other"
+  },
+  {
+    "itemType": "Twin Beds",
+    "parentItemType": "Beds"
+  },
+  {
+    "itemType": "Nightstand",
+    "parentItemType": "Nightstand"
+  },
+  {
+    "itemType": "Changers",
+    "parentItemType": "Other"
+  },
+  {
+    "itemType": "Adult Rockers",
+    "parentItemType": "Seating"
+  },
+  {
+    "itemType": "Toddler Bed",
+    "parentItemType": "Beds"
+  },
+  {
+    "itemType": "Accessories",
+    "parentItemType": "Other"
+  },
+  {
+    "itemType": "Bunk Beds",
+    "parentItemType": "Beds"
+  },
+  {
+    "itemType": "Cradles",
+    "parentItemType": "Other"
+  }
+]

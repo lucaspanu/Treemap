@@ -38,10 +38,10 @@
   font-weight: bold;
 }
 
-.ticker {
+.collection {
   padding-left: 10px;
 }
-.price {
+.revenue {
   padding-left: 4px;
   padding-right: 4px;
   text-align: right;

@@ -1,11 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import TreemapTooltip from "./TreemapTooltip/TreemapTooltip";
 import "./Treemap.css";
-import { getChangeColor, getChangeFormat } from "../../utils/fx";
+import {
+  getChangeColor,
+  getChangeFormat,
+  getChangePercentage,
+} from "../../utils/fx";
 
-const height = 500;
-const width = 500;
+const height = 800;
+const width = 1400;
 
 const Treemap = ({ data }) => {
   const ref = useRef();
@@ -25,34 +29,153 @@ const Treemap = ({ data }) => {
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     let svg = d3
       .select(ref.current)
       .attr("width", width)
-      .attr("height", height);
+      .attr("height", height)
+      .style("background", "rgb(38,41,49)");
 
     let hierarchy = d3
       .hierarchy(data)
-      .sum((d) => d.price)
+      .sum((d) => d.revenueLM)
       .sort((a, b) => b.value - a.value);
 
-    let root = d3.treemap().size([width, height]).round(true)(hierarchy);
+    let root = d3
+      .treemap()
+      .size([width, height])
+      .paddingOuter(3)
+      .paddingTop(16)
+      .paddingInner(1)
+      .round(true)(hierarchy);
 
     var tool = d3.select(tooltipRef.current);
 
-    let childArray = root.descendants().filter((d) => d.depth == 2);
+    let titleArray = root.descendants().filter((d) => d.depth == 1);
+    let subTitleArray = root.descendants().filter((d) => d.depth == 2);
+    let collectionArray = root.descendants().filter((d) => d.depth == 3);
+
+    // TITLE
+    svg
+      .selectAll(".title")
+      .data(titleArray)
+      .enter()
+      .append("text")
+      .attr("x", (d) => d.x0 + 6)
+      .attr("y", (d) => d.y0 + 12)
+      .style("text-transform", "uppercase")
+      .style("font-weight", "bold")
+      .attr("font-size", "15px")
+      .text(function (d) {
+        var cellWidth = d.x1 - d.x0;
+
+        var tempText = svg
+          .append("text")
+          .attr("opacity", 0)
+          .style("text-transform", "uppercase")
+          .style("font-weight", "bold")
+          .attr("font-size", "15px")
+          .text(d.data.name[0]);
+        var textWidth = tempText.node().getBBox().width - 1;
+        tempText.remove();
+        const maxCaracters = cellWidth / textWidth;
+        return d.data.name.substr(0, maxCaracters);
+      })
+      .attr("fill", "white");
+
+    // SUB TITLE
+    svg
+      .selectAll(".cell-sub-title")
+      .data(subTitleArray)
+      .enter()
+      .append("rect")
+      .attr("x", (d) => d.x0 + 3.5)
+      .attr("y", (d) => d.y0)
+      .attr("width", (d) => d.x1 - d.x0 - 7)
+      .attr("height", "16px")
+      .style("fill", (d) => {
+        const { revenuePM, moM } = d.data.children.sort(
+          (a, b) => b.revenueLM - a.revenueLM
+        )[0];
+        const changePercentage = getChangePercentage(revenuePM, moM);
+        return getChangeColor(changePercentage);
+      })
+      .attr("display", (d) => {
+        var cellWidth = d.x1 - d.x0;
+        var cellHeight = d.y1 - d.y0;
+        return cellWidth > 20 && cellHeight > 16 ? "inherit" : "none";
+      });
+
+    // svg
+    //   .selectAll(".cell-sub-title-hover")
+    //   .data(subTitleArray)
+    //   .enter()
+    //   .append("rect")
+    //   .attr("x", (d) => d.x0)
+    //   .attr("y", (d) => {
+    //     var cellWidth = d.x1 - d.x0;
+    //     var cellHeight = d.y1 - d.y0;
+    //     return cellWidth > 20 && cellHeight > 16 ? d.y0 - 1 : d.y0 + 13;
+    //   })
+    //   .attr("width", (d) => d.x1 - d.x0)
+    //   .attr("height", (d) => {
+    //     var cellWidth = d.x1 - d.x0;
+    //     var cellHeight = d.y1 - d.y0;
+    //     return cellWidth > 20 && cellHeight > 16 ? cellHeight : cellHeight - 13;
+    //   })
+    //   .attr("rx", "4px")
+    //   .style("fill", "rgb(255,214,20)")
+    //   .attr("class", "sub-title-hover");
 
     svg
+      .selectAll(".sub-title")
+      .data(subTitleArray)
+      .enter()
+      .append("text")
+      .attr("x", (d) => d.x0 + 7)
+      .attr("y", (d) => d.y0 + 12)
+      .text(function (d) {
+        var cellWidth = d.x1 - d.x0;
+
+        var tempText = svg
+          .append("text")
+          .attr("opacity", 0)
+          .style("font-weight", "bold")
+          .attr("font-size", "11px")
+          .text(d.data.name[0]);
+        var textWidth = tempText.node().getBBox().width - 1;
+        tempText.remove();
+        const maxCaracters = cellWidth / textWidth - 1;
+        return d.data.name.substr(0, maxCaracters);
+      })
+      .attr("display", (d) => {
+        var cellWidth = d.x1 - d.x0;
+        var cellHeight = d.y1 - d.y0;
+        return cellWidth > 20 && cellHeight > 16 ? "inherit" : "none";
+      })
+      .style("font-weight", "bold")
+      .attr("font-size", "11px")
+      .attr("fill", "white");
+
+    // CELLS
+    svg
       .selectAll(".cells")
-      .data(childArray)
+      .data(collectionArray)
       .enter()
       .append("rect")
       .attr("x", (d) => d.x0)
       .attr("y", (d) => d.y0)
       .attr("width", (d) => d.x1 - d.x0)
       .attr("height", (d) => d.y1 - d.y0)
-      .style("stroke", "white")
-      .style("fill", (d) => getChangeColor(d.data.change))
+      .style("stroke", "rgb(38,41,49)")
+      .style("fill", (d) => {
+        const { revenuePM, moM } = d.data;
+        const changePercentage = getChangePercentage(revenuePM, moM);
+        return getChangeColor(changePercentage);
+      })
+      .on("click", function (e, d) {
+        handleTooltip(e, d, tool);
+      })
       .on("mousemove", function (e, d) {
         handleTooltip(e, d, tool);
       })
@@ -62,7 +185,7 @@ const Treemap = ({ data }) => {
 
     svg
       .selectAll(".text")
-      .data(childArray)
+      .data(collectionArray)
       .enter()
       .append("text")
       .attr("x", (d) => d.x0 + (d.x1 - d.x0) / 2)
@@ -76,14 +199,17 @@ const Treemap = ({ data }) => {
           .append("text")
           .attr("opacity", 0)
           .attr("id", "treemapTitle")
-          .text(d.data.ticker);
+          .text(d.data.collection);
         var textWidth = tempText.node().getBBox().width;
         var textHeight = tempText.node().getBBox().height;
         tempText.remove();
 
         return textWidth <= cellWidth && textHeight <= cellHeight
-          ? d.data.ticker
+          ? d.data.collection
           : "";
+      })
+      .on("click", function (e, d) {
+        handleTooltip(e, d, tool);
       })
       .on("mousemove", function (e, d) {
         handleTooltip(e, d, tool);
@@ -94,14 +220,20 @@ const Treemap = ({ data }) => {
 
     // and to add the text labels
     svg
-      .selectAll("vals")
-      .data(childArray)
+      .selectAll(".sub-text")
+      .data(collectionArray)
       .enter()
       .append("text")
-      .attr("x", (d) => d.x0 + (d.x1 - d.x0) / 2 - 20)
+      .attr("x", (d) => d.x0 + (d.x1 - d.x0) / 2)
       .attr("y", (d) => d.y0 + (d.y1 - d.y0) / 2 + 24)
       .attr("id", "treemapSubTitle")
       .text(function (d) {
+        // Text
+        const { revenuePM, moM } = d.data;
+        const changePercentage = getChangePercentage(revenuePM, moM);
+        const text = getChangeFormat(changePercentage);
+
+        // Calc
         var cellWidth = d.x1 - d.x0;
         var cellHeight = d.y1 - d.y0;
 
@@ -109,24 +241,28 @@ const Treemap = ({ data }) => {
           .append("text")
           .attr("opacity", 0)
           .attr("id", "treemapTitle")
-          .text(d.data.ticker);
+          .text(d.data.collection);
         var textWidth = tempText.node().getBBox().width;
         var textHeight = tempText.node().getBBox().height;
+        tempText.remove();
 
         var subText = svg
           .append("text")
           .attr("opacity", 0)
           .attr("id", "treemapSubTitle")
-          .text(d.data.change);
+          .text(text);
         var subTextWidth = subText.node().getBBox().width;
         var subTextHeight = subText.node().getBBox().height;
         subText.remove();
 
         return textWidth <= cellWidth &&
-          subTextWidth <= cellWidth &&
-          textHeight + subTextHeight <= cellHeight
-          ? getChangeFormat(d.data.change)
+          subTextWidth + 10 <= cellWidth &&
+          textHeight + subTextHeight <= cellHeight - 20 // -> Padding
+          ? text
           : "";
+      })
+      .on("click", function (e, d) {
+        handleTooltip(e, d, tool);
       })
       .on("mousemove", function (e, d) {
         handleTooltip(e, d, tool);
@@ -137,28 +273,31 @@ const Treemap = ({ data }) => {
   }, [tooltipData, data]);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        minWidth: width,
-        minHeight: height,
-        backgroundColor: "#fff",
-      }}
-    >
-      <div className="sectorTitle">{data.name}</div>
-      <TreemapTooltip tooltipRef={tooltipRef} data={tooltipData} />
-      <svg
-        ref={ref}
-        viewBox={`0 0 ${width} ${height}`}
-        className="noselect"
+    <>
+      <div
         style={{
-          maxWidth: "100%",
-          height: "auto",
-          font: "12px sans-serif",
-          backgroundColor: "#fff",
+          position: "relative",
+          minWidth: width,
+          minHeight: height,
+          backgroundColor: "rgb(38,41,49)",
         }}
-      ></svg>
-    </div>
+      >
+        {/* TODO delete sectorTitle */}
+        <div className="sectorTitle">{data.name}</div>
+        <svg
+          ref={ref}
+          viewBox={`0 0 ${width} ${height}`}
+          className="noselect"
+          style={{
+            maxWidth: "100%",
+            height: "auto",
+            font: "12px sans-serif",
+            backgroundColor: "rgb(38,41,49)",
+          }}
+        ></svg>
+      </div>
+      <TreemapTooltip tooltipRef={tooltipRef} data={tooltipData} />
+    </>
   );
 };
 

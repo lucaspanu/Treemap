@@ -1,7 +1,11 @@
 import React from "react";
 import "./TreemapTooltip.css";
-import { SparkLineChart } from "@mui/x-charts";
-import { getChangeColor, getChangeFormat } from "../../../utils/fx";
+import {
+  getChangeColor,
+  getChangeFormat,
+  getChangePercentage,
+  numberToCurrency,
+} from "../../../utils/fx";
 
 const TreemapTooltip = ({ tooltipRef, data }) => {
   if (!data) return null;
@@ -22,8 +26,9 @@ const TreemapTooltip = ({ tooltipRef, data }) => {
         <tbody>
           {childrens.map((x, idx) => {
             const isHovered = idx === 0;
+            const percentage = getChangePercentage(x.revenuePM, x.moM);
             const backgroundColor = isHovered
-              ? getChangeColor(x.change)
+              ? getChangeColor(percentage)
               : "#fff";
             return (
               <>
@@ -50,23 +55,19 @@ const TreemapTooltip = ({ tooltipRef, data }) => {
 };
 
 const TableRow = ({ data, isHovered }) => {
+  const percentage = getChangePercentage(data.revenuePM, data.moM);
   return (
     <>
-      <td className="ticker">{data.ticker}</td>
-      <td>
-        <SparkLineChart
-          data={data.graph}
-          height={26}
-          width={65}
-          colors={isHovered ? ["#fff"] : ["#000"]}
-        />
-      </td>
-      <td className="price">{data.price}</td>
+      <td className="collection">{data.collection}</td>
+      <td />
+      <td className="revenue">{numberToCurrency(data.revenueLM)}</td>
       <td
         className="change"
-        style={{ color: isHovered ? "#fff" : getChangeColor(data.change) }}
+        style={{
+          color: isHovered ? "#fff" : getChangeColor(percentage),
+        }}
       >
-        {getChangeFormat(data.change)}
+        {getChangeFormat(percentage)}
       </td>
     </>
   );

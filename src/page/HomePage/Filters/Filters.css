@@ -1,0 +1,31 @@
+.filtersContainer {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 20px 40px;
+  background-color: rgb(64 69 83);
+  width: 200px;
+  min-width: 200px;
+  color: white;
+  height: fit-content;
+}
+
+.filtersTitle {
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.filtersList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.separator {
+  height: 1px;
+  background-color: rgb(38, 41, 49);
+  margin: 20px 0px;
+}
+
+.viewSelector {
+  display: flex;
+}
