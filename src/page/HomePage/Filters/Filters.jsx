@@ -1,88 +1,74 @@
 import React from "react";
 import "./Filters.css";
-import { Autocomplete, TextField } from "@mui/material";
-// import { ViewQuilt, AccountTree } from "@mui/icons-material";
+import sectionData from "../../../client/sectionData.mock.json";
+import Filter from "./Filter/Filter";
 
-const Filters = () => {
+const FiltersConfig = [
+  {
+    key: "brand",
+    label: "Brand",
+    options: ["All", "DV", "CDV", "BL", "NAMESAKE", "MDBF", "NW", "UB"],
+  },
+  {
+    key: "itemType",
+    label: "Item Type",
+    options: ["All", ...sectionData.flatMap((x) => x.itemType)],
+  },
+  {
+    key: "lifeCycleStatus",
+    label: "Lifecycle Status",
+    options: ["All", "Active", "Disco"],
+  },
+  {
+    separator: true,
+  },
+  {
+    label: "Date",
+    options: ["x", "b", "c"],
+    defaultValue: "x",
+    disabled: true,
+  },
+  {
+    label: "Change Period",
+    options: ["MoM", "WoW "],
+    defaultValue: "MoM",
+    disabled: true,
+  },
+  {
+    label: "Metric",
+    options: [
+      "Revenue",
+      "Units Sold",
+      "Glance Views",
+      "Ad Spend",
+      "Ad Sales",
+      "Ad Units",
+    ],
+    defaultValue: "Revenue",
+    disabled: true,
+  },
+];
+
+const Filters = ({ setFilters }) => {
   return (
     <div className="filtersContainer">
-      {/* <div className="viewSelector">
-        VIEW
-        <div>
-          <ViewQuilt fontSize="small" /> Map
-        </div>
-        <div>
-          <AccountTree fontSize="small" disabled /> Graph
-        </div>
-      </div> */}
       <div className="filtersTitle">MAP FILTERS</div>
       <div className="filtersList">
-        <Autocomplete
-          disablePortal
-          size="small"
-          options={["all", "b", "c"]}
-          defaultValue={"all"}
-          disableClearable
-          disabled
-          renderInput={(params) => <TextField {...params} label="Brand" />}
-        />
-        <Autocomplete
-          disablePortal
-          options={["all", "b", "c"]}
-          defaultValue={"all"}
-          size="small"
-          disableClearable
-          disabled
-          renderInput={(params) => <TextField {...params} label="Item Type" />}
-        />
-        <Autocomplete
-          disablePortal
-          options={["all", "b", "c"]}
-          defaultValue={"all"}
-          size="small"
-          disableClearable
-          disabled
-          renderInput={(params) => (
-            <TextField {...params} label="Lifecycle Status" />
-          )}
-        />
-        <div className="separator" />
-        <Autocomplete
-          disablePortal
-          options={["x", "b", "c"]}
-          defaultValue={"x"}
-          size="small"
-          disableClearable
-          disabled
-          renderInput={(params) => <TextField {...params} label="Date" />}
-        />
-        <Autocomplete
-          disablePortal
-          options={["MoM", "WoW "]}
-          defaultValue={"MoM"}
-          size="small"
-          disableClearable
-          disabled
-          renderInput={(params) => (
-            <TextField {...params} label="Change Period" />
-          )}
-        />
-        <Autocomplete
-          disablePortal
-          options={[
-            "Revenue",
-            "Units Sold",
-            "Glance Views",
-            "Ad Spend",
-            "Ad Sales",
-            "Ad Units",
-          ]}
-          defaultValue={"Revenue"}
-          size="small"
-          disableClearable
-          disabled
-          renderInput={(params) => <TextField {...params} label="Metric" />}
-        />
+        {FiltersConfig.map(
+          ({ key, label, options, separator, defaultValue, disabled }) => {
+            if (separator) return <div className="separator" />;
+            return (
+              <Filter
+                key={key}
+                label={label}
+                options={options}
+                defaultValue={defaultValue}
+                disabled={disabled}
+                onChange={(x) => setFilters(key, x)}
+              />
+            );
+          }
+        )}
       </div>
     </div>
   );

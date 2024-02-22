@@ -1,0 +1,11 @@
+#select-label {
+  color: rgb(175, 177, 179);
+}
+
+#simple-select {
+  color: #fff;
+}
+
+.MuiSvgIcon-root {
+  color: rgb(175, 177, 179) !important;
+}

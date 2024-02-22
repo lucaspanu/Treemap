@@ -8,11 +8,8 @@ import {
   getChangePercentage,
 } from "../../utils/fx";
 
-const height = 800;
-const width = 1400;
-
-const Treemap = ({ data }) => {
-  const ref = useRef();
+export default function Treemap({ data, width, height }) {
+  const svgRef = useRef(null);
 
   const tooltipRef = useRef();
   const [tooltipData, setTooltipData] = useState();
@@ -29,36 +26,38 @@ const Treemap = ({ data }) => {
     }
   };
 
-  useLayoutEffect(() => {
-    let svg = d3
-      .select(ref.current)
-      .attr("width", width)
-      .attr("height", height)
-      .style("background", "rgb(38,41,49)");
+  function renderTreemap() {
+    const svg = d3.select(svgRef.current);
 
-    let hierarchy = d3
+    svg.selectAll("g").remove();
+    svg.selectAll("text").remove();
+    svg.selectAll("rect").remove();
+
+    svg.attr("width", width).attr("height", height);
+
+    const root = d3
       .hierarchy(data)
       .sum((d) => d.revenueLM)
       .sort((a, b) => b.value - a.value);
 
-    let root = d3
+    const treemapRoot = d3
       .treemap()
       .size([width, height])
       .paddingOuter(3)
       .paddingTop(16)
-      .paddingInner(1)
-      .round(true)(hierarchy);
+      .paddingInner(1)(root);
 
-    let titleArray = root.descendants().filter((d) => d.depth == 1);
-    let subTitleArray = root.descendants().filter((d) => d.depth == 2);
-    let collectionArray = root.descendants().filter((d) => d.depth == 3);
+    const titleArray = treemapRoot.descendants().filter((d) => d.depth == 1);
+    const subTitleArray = treemapRoot.descendants().filter((d) => d.depth == 2);
+    const collectionArray = treemapRoot
+      .descendants()
+      .filter((d) => d.depth == 3);
 
     // TITLE
     svg
       .selectAll(".title")
       .data(titleArray)
-      .enter()
-      .append("text")
+      .join("text")
       .attr("x", (d) => d.x0 + 6)
       .attr("y", (d) => d.y0 + 12)
       .style("text-transform", "uppercase")
@@ -85,8 +84,7 @@ const Treemap = ({ data }) => {
     svg
       .selectAll(".cell-sub-title")
       .data(subTitleArray)
-      .enter()
-      .append("rect")
+      .join("rect")
       .attr("x", (d) => d.x0 + 3.5)
       .attr("y", (d) => d.y0)
       .attr("width", (d) => d.x1 - d.x0 - 7)
@@ -107,8 +105,7 @@ const Treemap = ({ data }) => {
     svg
       .selectAll(".sub-title")
       .data(subTitleArray)
-      .enter()
-      .append("text")
+      .join("text")
       .attr("x", (d) => d.x0 + 7)
       .attr("y", (d) => d.y0 + 12)
       .text(function (d) {
@@ -138,8 +135,7 @@ const Treemap = ({ data }) => {
     svg
       .selectAll(".cells")
       .data(collectionArray)
-      .enter()
-      .append("rect")
+      .join("rect")
       .attr("x", (d) => d.x0)
       .attr("y", (d) => d.y0)
       .attr("width", (d) => d.x1 - d.x0)
@@ -154,8 +150,7 @@ const Treemap = ({ data }) => {
     svg
       .selectAll(".text")
       .data(collectionArray)
-      .enter()
-      .append("text")
+      .join("text")
       .attr("x", (d) => d.x0 + (d.x1 - d.x0) / 2)
       .attr("y", (d) => d.y0 + (d.y1 - d.y0) / 2 + 8)
       .attr("id", "treemapTitle")
@@ -181,8 +176,7 @@ const Treemap = ({ data }) => {
     svg
       .selectAll(".sub-text")
       .data(collectionArray)
-      .enter()
-      .append("text")
+      .join("text")
       .attr("x", (d) => d.x0 + (d.x1 - d.x0) / 2)
       .attr("y", (d) => d.y0 + (d.y1 - d.y0) / 2 + 24)
       .attr("id", "treemapSubTitle")
@@ -220,38 +214,39 @@ const Treemap = ({ data }) => {
           ? text
           : "";
       });
-  }, [data]);
+  }
 
   // TOOLTIP
-  useLayoutEffect(() => {
-    let svg = d3
-      .select(ref.current)
-      .attr("width", width)
-      .attr("height", height);
+  function renderTreemapTooltip() {
+    const tool = d3.select(tooltipRef.current);
+    const svg = d3.select(svgRef.current);
 
-    let hierarchy = d3
+    svg.attr("width", width).attr("height", height);
+
+    const root = d3
       .hierarchy(data)
       .sum((d) => d.revenueLM)
       .sort((a, b) => b.value - a.value);
 
-    let root = d3
+    const treemapRoot = d3
       .treemap()
       .size([width, height])
       .paddingOuter(3)
       .paddingTop(16)
-      .paddingInner(1)
-      .round(true)(hierarchy);
+      .paddingInner(1)(root);
 
-    var tool = d3.select(tooltipRef.current);
-    let collectionArray = root.descendants().filter((d) => d.depth == 3);
+    const collectionArray = treemapRoot
+      .descendants()
+      .filter((d) => d.depth == 3);
 
-    svg
-      .selectAll(".cells-tooltip")
+    const collectionNodes = svg
+      .selectAll("g")
       .data(collectionArray)
-      .enter()
+      .join("g")
+      .attr("transform", (d) => `translate(${d.x0},${d.y0})`);
+
+    collectionNodes
       .append("rect")
-      .attr("x", (d) => d.x0)
-      .attr("y", (d) => d.y0)
       .attr("width", (d) => d.x1 - d.x0)
       .attr("height", (d) => d.y1 - d.y0)
       .style("opacity", 0)
@@ -264,33 +259,35 @@ const Treemap = ({ data }) => {
       .on("mouseout", function () {
         tool.style("display", "none");
       });
-  }, [tooltipData]);
+  }
+
+  useLayoutEffect(() => {
+    renderTreemap();
+  }, [data]);
+
+  useLayoutEffect(() => {
+    renderTreemapTooltip();
+  }, [tooltipData, data]);
 
   return (
     <>
       <div
         style={{
-          position: "relative",
           minWidth: width,
           minHeight: height,
           backgroundColor: "rgb(38,41,49)",
         }}
       >
         <svg
-          ref={ref}
-          viewBox={`0 0 ${width} ${height}`}
+          ref={svgRef}
           className="noselect"
           style={{
-            maxWidth: "100%",
-            height: "auto",
             font: "12px sans-serif",
             backgroundColor: "rgb(38,41,49)",
           }}
-        ></svg>
+        />
       </div>
       <TreemapTooltip tooltipRef={tooltipRef} data={tooltipData} />
     </>
   );
-};
-
-export default Treemap;
+}
