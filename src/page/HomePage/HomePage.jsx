@@ -5,8 +5,11 @@ import data from "../../client/data.mock.json";
 import sectionData from "../../client/sectionData.mock.json";
 import { uniq } from "lodash/fp";
 import Filters from "./Filters/Filters";
+import ShowPass from "./ShowPass/ShowPass";
 
 const HomePage = () => {
+  const [showPass, setShowPass] = useState(true);
+
   const [filters, setFilters] = useState({});
   const hangleSetFilter = (label, value) => {
     setFilters({ ...filters, [label]: value });
@@ -14,6 +17,8 @@ const HomePage = () => {
 
   const parsedData = getParsedData(filters);
   const data = { children: parsedData };
+
+  if (showPass) return <ShowPass setShowPass={setShowPass} />;
 
   return (
     <div className="pageContainer">
@@ -62,6 +67,7 @@ const getParentSection = (itemType) =>
   sectionData.find((x) => x.itemType === itemType).parentItemType || "Other";
 
 // - Improvements -
+// More filters
 // ZOOM
 // hover treemap
 // Teemap Title size

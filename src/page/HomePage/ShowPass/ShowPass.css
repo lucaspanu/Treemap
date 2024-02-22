@@ -1,0 +1,19 @@
+.passContainer {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+#outlined-basic {
+  color: white;
+}
+
+#standard-basic-label {
+  color: white;
+}
+
+.passContainer .MuiOutlinedInput-notchedOutline {
+  border-color: rgb(64 69 83) !important;
+}
